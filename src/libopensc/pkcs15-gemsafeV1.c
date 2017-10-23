@@ -117,6 +117,11 @@ const pindata gemsafe_pin[] = {
 	  "01", "DS pin", GEMSAFE_PATH, 0x01, SC_PKCS15_PIN_TYPE_ASCII_NUMERIC,
 	  8, 4, SC_PKCS15_PIN_FLAG_NEEDS_PADDING | SC_PKCS15_PIN_FLAG_LOCAL,
 	  3, 0x00, SC_PKCS15_CO_FLAG_MODIFIABLE | SC_PKCS15_CO_FLAG_PRIVATE },
+        { {0x3B, 0x6A, 0x00, 0xFF, 0x4A, 0x43, 0x4F, 0x50, 0x34,
+           0x31, 0x56, 0x32, 0x32, 0x31 }, 14,
+           "01", "DS pin", GEMSAFE_PATH, 0x01, SC_PKCS15_PIN_TYPE_ASCII_NUMERIC,
+           8, 4, SC_PKCS15_PIN_FLAG_NEEDS_PADDING | SC_PKCS15_PIN_FLAG_LOCAL,
+           3, 0x00, SC_PKCS15_CO_FLAG_MODIFIABLE | SC_PKCS15_CO_FLAG_PRIVATE },
 	/* default PIN policy comes last: */
 	{ { 0 }, 0,
 	  "01", "DS pin", GEMSAFE_PATH, 0x01, SC_PKCS15_PIN_TYPE_BCD,
@@ -208,7 +213,7 @@ static int gemsafe_get_cert_len(sc_card_t *card)
 	 * the private key.
 	 */
 	ind = 2; /* skip length */
-	while (ibuf[ind] == 0x01) {
+	while ((ibuf[ind] == 0x01) || (ibuf[ind+1] == 0xDE)) {
 		if (ibuf[ind+1] == 0xFE) {
 			gemsafe_prkeys[i].ref = ibuf[ind+4];
 			sc_log(card->ctx, "Key container %d is allocated and uses key_ref %d",
